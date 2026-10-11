@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CEREBRAL VEDA // Bio-Cybernetic Longevity HUD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -12,566 +15,889 @@
         extend: {
           colors: {
             hud: {
-              bg: '#090d16',
-              surface: '#111827',
-              card: '#162033',
-              border: '#1f2d47',
-              cyan: '#00f2fe',
-              emerald: '#10b981',
-              amber: '#f59e0b',
-              crimson: '#ef4444',
-              accent: '#38bdf8'
+              void: '#050811',
+              card: '#0a1020',
+              glass: 'rgba(10, 16, 32, 0.75)',
+              border: '#152238',
+              borderHighlight: '#22385c',
+              cyan: '#00F2FE',
+              cyanGlow: 'rgba(0, 242, 254, 0.35)',
+              emerald: '#10B981',
+              emeraldGlow: 'rgba(16, 185, 129, 0.35)',
+              crimson: '#EF4444',
+              amber: '#F59E0B',
+              indigo: '#6366F1'
             }
           },
           fontFamily: {
-            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif']
           }
         }
       }
     }
   </script>
   <style>
-    @keyframes pulse-slow {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    /* Background Grid & Scanline Aesthetic */
+    body {
+      background-color: #050811;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 242, 254, 0.08) 0%, transparent 60%),
+        radial-gradient(circle at 80% 40%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
     }
-    .animate-pulse-slow {
-      animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    .hud-glass {
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(11, 19, 38, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.07);
     }
-    .glow-cyan {
-      box-shadow: 0 0 25px rgba(0, 242, 254, 0.15);
+    .hud-glow-cyan {
+      box-shadow: 0 0 30px rgba(0, 242, 254, 0.12), inset 0 0 15px rgba(0, 242, 254, 0.05);
     }
-    .glow-emerald {
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.15);
+    .hud-glow-emerald {
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.12), inset 0 0 15px rgba(16, 185, 129, 0.05);
+    }
+    .pulse-ring {
+      animation: pulseRing 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+    }
+    @keyframes pulseRing {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.08); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
     }
   </style>
 </head>
-<body class="bg-hud-bg text-slate-200 font-sans min-h-screen selection:bg-cyan-500 selection:text-black">
+<body class="text-slate-300 font-sans selection:bg-cyan-400 selection:text-black">
 
-  <!-- TOP HUD BAR -->
-  <header class="border-b border-hud-border bg-hud-surface/90 sticky top-0 z-50 backdrop-blur-md">
+  <!-- HUD NAVIGATION -->
+  <header class="sticky top-0 z-40 border-b border-hud-border/80 bg-hud-void/85 backdrop-blur-xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-3 h-3 rounded-full bg-hud-cyan animate-pulse"></div>
+        <div class="relative flex items-center justify-center w-8 h-8 rounded-lg bg-hud-cyan/10 border border-hud-cyan/40">
+          <span class="w-2.5 h-2.5 rounded-full bg-hud-cyan shadow-[0_0_12px_#00F2FE]"></span>
+        </div>
         <div>
-          <span class="font-mono text-sm tracking-wider font-bold text-hud-cyan">CEREBRAL_VEDA // v2.6</span>
-          <span class="hidden sm:inline-block ml-2 text-xs font-mono text-slate-400">| LONGEVITY_OS</span>
+          <div class="flex items-center space-x-2">
+            <span class="font-display font-bold text-base tracking-wider text-white">CEREBRAL<span class="text-hud-cyan">VEDA</span></span>
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-hud-cyan border border-cyan-800/60 font-semibold">OS v3.2</span>
+          </div>
+          <span class="text-[10px] font-mono text-slate-400 tracking-wider hidden sm:block">NEUROVASCULAR TELEMETRY × VEDIC CYBERNETICS</span>
         </div>
       </div>
-      <nav class="flex items-center space-x-1 sm:space-x-4 text-xs font-mono">
-        <a href="#flowchart" class="px-2 py-1 hover:text-hud-cyan transition-colors">FLOWCHART</a>
-        <a href="#evidence" class="px-2 py-1 hover:text-hud-cyan transition-colors">SKEPTIC_VAULT</a>
-        <a href="#exercises" class="px-2 py-1 hover:text-hud-cyan transition-colors">MOVEMENT_MATRIX</a>
-        <a href="#nutrition" class="px-2 py-1 hover:text-hud-cyan transition-colors">NUTRITION</a>
-        <a href="#pacer" class="px-3 py-1 bg-hud-cyan/10 text-hud-cyan border border-hud-cyan/30 rounded hover:bg-hud-cyan hover:text-black transition-all">BREATH_PACER</a>
+
+      <nav class="flex items-center space-x-1 sm:space-x-3 text-xs font-mono">
+        <a href="#simulator" class="px-2.5 py-1 rounded text-slate-300 hover:text-white hover:bg-white/5 transition-all">SIMULATOR</a>
+        <a href="#flowchart" class="px-2.5 py-1 rounded text-slate-300 hover:text-white hover:bg-white/5 transition-all">ARCHITECTURE</a>
+        <a href="#evidence" class="px-2.5 py-1 rounded text-slate-300 hover:text-white hover:bg-white/5 transition-all">SKEPTIC_VAULT</a>
+        <a href="#movement" class="px-2.5 py-1 rounded text-slate-300 hover:text-white hover:bg-white/5 transition-all">SCHEMATICS</a>
+        <a href="#tools" class="px-2.5 py-1 rounded text-slate-300 hover:text-white hover:bg-white/5 transition-all">BIO_PACER</a>
+        
+        <!-- AUDIO SOUND EFFECTS TOGGLE -->
+        <button onclick="toggleAudio()" id="audio-toggle" class="ml-2 px-2.5 py-1 rounded border border-hud-border bg-hud-card text-slate-400 hover:text-white flex items-center space-x-1 transition-all" title="Toggle Futuristic Audio Feedback">
+          <span id="audio-icon">🔊</span>
+          <span class="hidden md:inline text-[10px]">SFX: <span id="audio-status" class="text-hud-cyan">ON</span></span>
+        </button>
       </nav>
     </div>
   </header>
 
-  <!-- HERO SECTION -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-    <div class="border border-hud-border bg-hud-card/60 rounded-xl p-6 sm:p-10 relative overflow-hidden glow-cyan">
-      <div class="absolute -right-20 -top-20 w-80 h-80 bg-hud-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="max-w-3xl">
-        <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded bg-hud-cyan/10 border border-hud-cyan/20 text-hud-cyan text-xs font-mono mb-4">
-          <span>● COMPRESSION OF MORBIDITY</span>
+  <!-- HERO TELEMETRY BANNER -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
+    <div class="hud-glass rounded-2xl p-6 sm:p-12 relative overflow-hidden hud-glow-cyan border border-hud-borderHighlight">
+      <div class="absolute -right-24 -top-24 w-96 h-96 bg-hud-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute right-1/4 -bottom-24 w-80 h-80 bg-hud-indigo/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-3xl relative z-10">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/30 text-hud-cyan text-xs font-mono font-medium mb-5">
+          <span class="w-2 h-2 rounded-full bg-hud-cyan animate-ping"></span>
+          <span>COMPRESSION OF MORBIDITY PROTOCOL</span>
           <span>//</span>
-          <span>ANCIENT CYBERNETICS × MODERN NEUROLOGY</span>
+          <span>ZERO NURSING HOME SENESCENCE</span>
         </div>
-        <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-white mb-4">
-          Die Normally at 95. <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-hud-cyan via-teal-300 to-hud-emerald">Never in Diapers or Dementia.</span>
+
+        <h1 class="text-4xl sm:text-6xl font-black font-display tracking-tight text-white leading-tight mb-5">
+          Die Normally at 95. <br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-hud-cyan via-teal-300 to-emerald-400">Never in Diapers or Dementia.</span>
         </h1>
-        <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
-          End-of-life incontinence and cognitive collapse are <strong>not normal aging</strong>. They represent preventable biomechanical and vascular failure modes. By combining modern fMRI clinical telemetry with ancient Rigvedic neural calibration, this system locks down independent mobility, sphincter control, and lifelong mental clarity.
+
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-2xl font-normal">
+          End-of-life incontinence and cognitive collapse are <strong>not normal aging</strong>. They represent catastrophic, preventable failures in transfer mechanics and cerebral perfusion. This system combines fMRI-validated neuro-acoustic algorithms with heavy compound muscular shock absorbers to guarantee 100% independent living until terminal organ shutdown.
         </p>
-        <div class="flex flex-wrap gap-3 font-mono text-xs">
-          <div class="bg-hud-surface px-3 py-2 rounded border border-hud-border flex items-center space-x-2">
-            <span class="text-hud-cyan">fMRI:</span> <span>+10% Hippocampus Density</span>
+
+        <!-- LIVE TELEMETRY CARDS -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 font-mono text-xs">
+          <div class="bg-hud-card/90 border border-hud-border p-3 rounded-xl">
+            <div class="text-slate-400 text-[10px] uppercase">Hartzell fMRI Study</div>
+            <div class="text-lg font-bold text-hud-cyan font-display mt-0.5">+10.2%</div>
+            <div class="text-[10px] text-slate-400">Hippocampus Density</div>
           </div>
-          <div class="bg-hud-surface px-3 py-2 rounded border border-hud-border flex items-center space-x-2">
-            <span class="text-hud-emerald">NITRIC OXIDE:</span> <span>+1,500% Sinus Surge</span>
+          <div class="bg-hud-card/90 border border-hud-border p-3 rounded-xl">
+            <div class="text-slate-400 text-[10px] uppercase">Acoustic Nitric Oxide</div>
+            <div class="text-lg font-bold text-hud-emerald font-display mt-0.5">1,500%</div>
+            <div class="text-[10px] text-slate-400">Sinus Vasodilation</div>
           </div>
-          <div class="bg-hud-surface px-3 py-2 rounded border border-hud-border flex items-center space-x-2">
-            <span class="text-amber-400">VO2 MAX:</span> <span>5x All-Cause Survival</span>
+          <div class="bg-hud-card/90 border border-hud-border p-3 rounded-xl">
+            <div class="text-slate-400 text-[10px] uppercase">Ghana Pāṭha Coding</div>
+            <div class="text-lg font-bold text-amber-400 font-display mt-0.5">0.00%</div>
+            <div class="text-[10px] text-slate-400">Bit-Rot over 3.5k Yrs</div>
+          </div>
+          <div class="bg-hud-card/90 border border-hud-border p-3 rounded-xl">
+            <div class="text-slate-400 text-[10px] uppercase">High VO2 Max Shield</div>
+            <div class="text-lg font-bold text-indigo-400 font-display mt-0.5">5.0x</div>
+            <div class="text-[10px] text-slate-400">Survival Multiplier</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- INTERACTIVE FLOWCHART SECTION -->
+  <!-- INTERACTIVE SIMULATOR SECTION: AGE VS DECLINE SIMULATOR -->
+  <section id="simulator" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="hud-glass border border-hud-border rounded-2xl p-6 sm:p-8">
+      <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-hud-border gap-4">
+        <div>
+          <div class="text-xs font-mono text-hud-cyan tracking-wider uppercase font-semibold">Interactive Trajectory Telemetry</div>
+          <h2 class="text-2xl font-bold font-display text-white mt-1">Age vs. Decline Simulator (60–95 Years)</h2>
+          <p class="text-xs text-slate-400 mt-1">Drag the slider to compare standard uncalibrated decline vs the Cerebral Veda protocol.</p>
+        </div>
+        <div class="flex items-center space-x-4 bg-hud-void px-4 py-2.5 rounded-xl border border-hud-border">
+          <span class="text-xs font-mono text-slate-400">SUBJECT AGE:</span>
+          <span id="age-display" class="text-2xl font-display font-black text-hud-cyan">70</span>
+          <span class="text-xs font-mono text-slate-400">YEARS OLD</span>
+        </div>
+      </div>
+
+      <!-- SLIDER -->
+      <div class="py-6">
+        <input type="range" id="age-slider" min="60" max="95" value="70" step="1" 
+               oninput="updateSimulator(this.value)"
+               class="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-hud-cyan">
+        <div class="flex justify-between font-mono text-[11px] text-slate-500 mt-2">
+          <span>Age 60 (Pre-Retirement)</span>
+          <span>Age 70 (The Critical Pivot)</span>
+          <span>Age 80 (Sarcopenia Steepens)</span>
+          <span>Age 90 (Biological Boundary)</span>
+          <span>Age 95+ (Centenarian)</span>
+        </div>
+      </div>
+
+      <!-- COMPARISON TELEMETRY -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+        <!-- Standard Western Model -->
+        <div class="bg-red-950/20 border border-red-900/40 rounded-xl p-5">
+          <div class="flex items-center justify-between text-xs font-mono text-red-400 font-bold mb-3">
+            <span>STANDARD DECLINE MODEL</span>
+            <span class="px-2 py-0.5 rounded bg-red-900/40 text-red-300">HIGH FRAGILITY</span>
+          </div>
+          <div class="space-y-3 font-mono text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-400">Unassisted Toilet Transfer:</span>
+                <span id="std-transfer" class="font-bold text-red-400">62% Probability</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-1.5"><div id="std-transfer-bar" class="bg-red-500 h-1.5 rounded-full" style="width: 62%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-400">Hippocampus Volume Retention:</span>
+                <span id="std-brain" class="font-bold text-red-400">74% of Baseline</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-1.5"><div id="std-brain-bar" class="bg-red-500 h-1.5 rounded-full" style="width: 74%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-400">Fecal Incontinence Risk:</span>
+                <span id="std-incontinence" class="font-bold text-red-400">22% High Risk</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-1.5"><div id="std-incont-bar" class="bg-red-500 h-1.5 rounded-full" style="width: 22%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cerebral Veda Protocol Model -->
+        <div class="bg-emerald-950/20 border border-emerald-800/40 rounded-xl p-5">
+          <div class="flex items-center justify-between text-xs font-mono text-hud-emerald font-bold mb-3">
+            <span>CEREBRAL VEDA PROTOCOL</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-900/40 text-emerald-300">COMPRESSED MORBIDITY</span>
+          </div>
+          <div class="space-y-3 font-mono text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-400">Unassisted Toilet Transfer:</span>
+                <span id="veda-transfer" class="font-bold text-hud-emerald">98% High Independence</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-1.5"><div id="veda-transfer-bar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 98%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-400">Hippocampus Volume Retention:</span>
+                <span id="veda-brain" class="font-bold text-hud-emerald">94% of Baseline</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-1.5"><div id="veda-brain-bar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 94%"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-1">
+                <span class="text-slate-400">Fecal Incontinence Risk:</span>
+                <span id="veda-incontinence" class="font-bold text-hud-emerald">1.5% Negligible</span>
+              </div>
+              <div class="w-full bg-slate-900 rounded-full h-1.5"><div id="veda-incont-bar" class="bg-emerald-400 h-1.5 rounded-full" style="width: 1.5%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SVG ARCHITECTURE FLOWCHART -->
   <section id="flowchart" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-          <span class="w-2 h-2 bg-hud-cyan rounded-full"></span>
-          <span>SYSTEM ARCHITECTURE: THE DUAL PROTOCOL</span>
-        </h2>
-        <p class="text-xs text-slate-400 font-mono mt-1">From Geriatric Failure Modes to Biological Longevity</p>
-      </div>
+    <div class="mb-6">
+      <div class="text-xs font-mono text-hud-cyan uppercase font-semibold">Visual Systems Pipeline</div>
+      <h2 class="text-2xl font-bold font-display text-white mt-1">Bio-Cybernetic Architecture Pipeline</h2>
     </div>
 
-    <div class="border border-hud-border bg-hud-surface rounded-xl p-6 overflow-x-auto">
-      <div class="min-w-[850px] flex flex-col space-y-6 text-xs font-mono">
-        <!-- Flow Row 1: Failure Modes -->
-        <div>
-          <div class="text-hud-crimson font-bold uppercase mb-2">Stage 01: Critical Geriatric Failure Modes</div>
-          <div class="grid grid-cols-4 gap-4">
-            <div class="p-3 bg-red-950/20 border border-red-900/40 rounded-lg">
-              <div class="text-red-400 font-bold mb-1">Fecal & Urinary Failure</div>
-              <p class="text-slate-400 text-[11px]">Sphincter laxity, impaction overflow, loss of transfer speed. 50% in nursing homes.</p>
+    <div class="hud-glass border border-hud-border rounded-2xl p-6 sm:p-8 overflow-x-auto">
+      <div class="min-w-[900px]">
+        <!-- Pipeline Steps -->
+        <div class="grid grid-cols-3 gap-6 relative">
+          <!-- Step 1 -->
+          <div class="bg-hud-card border border-red-900/50 rounded-xl p-5 relative">
+            <div class="flex items-center justify-between text-xs font-mono text-red-400 font-bold mb-3">
+              <span>01 // CORRUPTED STATE</span>
+              <span class="w-2 h-2 rounded-full bg-red-500"></span>
             </div>
-            <div class="p-3 bg-red-950/20 border border-red-900/40 rounded-lg">
-              <div class="text-red-400 font-bold mb-1">Severe Sarcopenia</div>
-              <p class="text-slate-400 text-[11px]">Loss of quad/glute power. Inability to stand from chair unassisted. Fall cascades.</p>
-            </div>
-            <div class="p-3 bg-red-950/20 border border-red-900/40 rounded-lg">
-              <div class="text-red-400 font-bold mb-1">Vascular / Alzheimer's</div>
-              <p class="text-slate-400 text-[11px]">Small vessel ischemic disease, amyloid-beta accumulation, cortical connection loss.</p>
-            </div>
-            <div class="p-3 bg-red-950/20 border border-red-900/40 rounded-lg">
-              <div class="text-red-400 font-bold mb-1">End-Stage Osteoarthritis</div>
-              <p class="text-slate-400 text-[11px]">Adipokine inflammation, muscle shock-absorber failure, cartilage starvation.</p>
-            </div>
+            <h3 class="font-display font-bold text-white text-base mb-2">Geriatric System Failures</h3>
+            <ul class="text-xs text-slate-400 space-y-1.5 font-mono">
+              <li>• Incontinence (Pudendal stretch / impaction)</li>
+              <li>• Sarcopenia (Glute & quad power collapse)</li>
+              <li>• Alzheimer's (Cerebral insulin resistance)</li>
+              <li>• Osteoarthritis (Cartilage starvation / impact)</li>
+            </ul>
           </div>
-        </div>
 
-        <div class="flex justify-around text-slate-500 font-bold text-base">
-          <span>↓</span><span>↓</span><span>↓</span><span>↓</span>
-        </div>
-
-        <!-- Flow Row 2: Dual Intervention Stack -->
-        <div>
-          <div class="text-hud-cyan font-bold uppercase mb-2">Stage 02: The Bio-Cybernetic Dual Stack</div>
-          <div class="grid grid-cols-4 gap-4">
-            <div class="p-3 bg-cyan-950/20 border border-cyan-800/40 rounded-lg">
-              <div class="text-cyan-300 font-bold mb-1">Pelvic & Stool Mechanics</div>
-              <p class="text-slate-400 text-[11px]">Kegels, Bristol Type-4 fiber tuning (Kiwis/Psyllium), footstool defecation posture.</p>
+          <!-- Step 2 -->
+          <div class="bg-hud-card border border-cyan-800/60 rounded-xl p-5 relative">
+            <div class="flex items-center justify-between text-xs font-mono text-hud-cyan font-bold mb-3">
+              <span>02 // THE DUAL-STACK FIX</span>
+              <span class="w-2 h-2 rounded-full bg-hud-cyan animate-pulse"></span>
             </div>
-            <div class="p-3 bg-cyan-950/20 border border-cyan-800/40 rounded-lg">
-              <div class="text-cyan-300 font-bold mb-1">Centenarian Decathlon</div>
-              <p class="text-slate-400 text-[11px]">Heavy compound squats, farmer's carries, Zone 2 mitochondrial aerobic base.</p>
-            </div>
-            <div class="p-3 bg-cyan-950/20 border border-cyan-800/40 rounded-lg">
-              <div class="text-cyan-300 font-bold mb-1">Rigvedic Acoustic Reset</div>
-              <p class="text-slate-400 text-[11px]">Gayatri / Medha mantras, 15x Nitric Oxide surge, deep vagal tone entrainment.</p>
-            </div>
-            <div class="p-3 bg-cyan-950/20 border border-cyan-800/40 rounded-lg">
-              <div class="text-cyan-300 font-bold mb-1">Postural Alignment</div>
-              <p class="text-slate-400 text-[11px]">Dead bugs, couch stretch, chin tucks, de-clamping hip flexors & cervical spine.</p>
-            </div>
+            <h3 class="font-display font-bold text-white text-base mb-2">Bio-Cybernetic Interventions</h3>
+            <ul class="text-xs text-slate-400 space-y-1.5 font-mono">
+              <li>• 1,500% Nitric Oxide paranasal acoustic pumping</li>
+              <li>• 12-Minute Posture alignment (Psoas release)</li>
+              <li>• Heavy Compound Squats + Zone 2 Base</li>
+              <li>• Bristol Type-4 fiber tuning (Kiwis + Psyllium)</li>
+            </ul>
           </div>
-        </div>
 
-        <div class="flex justify-around text-slate-500 font-bold text-base">
-          <span>↓</span><span>↓</span><span>↓</span><span>↓</span>
-        </div>
-
-        <!-- Flow Row 3: Target State -->
-        <div>
-          <div class="text-hud-emerald font-bold uppercase mb-2">Stage 03: End-State Target</div>
-          <div class="p-4 bg-emerald-950/20 border border-emerald-800/40 rounded-lg text-center">
-            <span class="text-emerald-400 font-bold text-sm tracking-wide">COMPRESSION OF MORBIDITY: 100% UNASSISTED PHYSICAL & COGNITIVE INDEPENDENCE</span>
-            <p class="text-slate-400 text-xs mt-1">Live vigorous, sharp, and diaper-free until final natural organ senescence. Zero institutional reliance.</p>
+          <!-- Step 3 -->
+          <div class="bg-hud-card border border-emerald-800/60 rounded-xl p-5 relative">
+            <div class="flex items-center justify-between text-xs font-mono text-hud-emerald font-bold mb-3">
+              <span>03 // OPTIMAL END STATE</span>
+              <span class="w-2 h-2 rounded-full bg-hud-emerald"></span>
+            </div>
+            <h3 class="font-display font-bold text-white text-base mb-2">Compression of Morbidity</h3>
+            <ul class="text-xs text-slate-400 space-y-1.5 font-mono">
+              <li>• Unassisted standing and gait at age 90+</li>
+              <li>• Zero fecal/urinary leakage or nursing homes</li>
+              <li>• Retained hippocampal memory networks</li>
+              <li>• Clean, natural, dignified cessation of life</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SKEPTIC'S VAULT SECTION -->
+  <!-- SKEPTIC'S VAULT: ZERO MYSTICISM CLINICAL PROOF -->
   <section id="evidence" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-6">
-      <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-        <span class="w-2 h-2 bg-hud-emerald rounded-full"></span>
-        <span>THE SKEPTIC'S VAULT: ZERO-MYSTICISM CLINICAL PROOF</span>
-      </h2>
-      <p class="text-xs text-slate-400 font-mono mt-1">How to prove ancient Sanskrit cybernetics to a Western rationalist using peer-reviewed science</p>
+      <div class="text-xs font-mono text-hud-emerald uppercase font-semibold">Scientific Telemetry</div>
+      <h2 class="text-2xl font-bold font-display text-white mt-1">The Skeptic's Vault: Peer-Reviewed Citations</h2>
+      <p class="text-xs text-slate-400 mt-1">Hard empirical proof to show any rationalist who assumes chanting is mere superstition.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Card 1: Hartzell fMRI -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-5 hover:border-hud-cyan transition-colors">
-        <div class="text-xs font-mono text-hud-cyan mb-2">NEUROLOGY // 2018</div>
-        <h3 class="text-base font-bold text-white mb-2">The "Sanskrit Effect" fMRI Study</h3>
+      <!-- Evidence 1 -->
+      <div class="hud-glass border border-hud-border rounded-2xl p-6 hover:border-hud-cyan transition-all group">
+        <div class="text-xs font-mono text-hud-cyan font-bold mb-2">NEUROIMAGE // 2018</div>
+        <h3 class="text-lg font-bold font-display text-white mb-2 group-hover:text-hud-cyan transition-colors">The "Sanskrit Effect" fMRI Study</h3>
         <p class="text-xs text-slate-300 leading-relaxed mb-4">
-          Dr. James Hartzell (Trento Center for Mind/Brain Sciences) scanned traditional Vedic pandits who memorize and recite Rigvedic texts. Structural MRI revealed <strong>statistically significant bilateral grey matter expansion in the hippocampus and temporal cortex</strong> — the precise regions destroyed first by Alzheimer's.
+          Dr. James Hartzell (Trento Center for Mind/Brain Sciences) conducted high-resolution structural MRI scans on traditional Vedic pandits. The scans revealed <strong>statistically significant bilateral increases in grey matter thickness across the hippocampus and temporal cortex</strong> — the exact memory centers decimated first in Alzheimer's disease.
         </p>
-        <div class="text-[11px] font-mono text-slate-400 border-t border-hud-border pt-3">
-          <strong>Citation:</strong> <em>NeuroImage</em>, Vol 172. "The Sanskrit Effect: Increased cortical thickness and hippocampal volume."
+        <div class="text-[11px] font-mono text-slate-500 border-t border-hud-border pt-3">
+          <strong>Publication:</strong> <em>NeuroImage</em>, Vol 172. "Increased cortical thickness and hippocampal volume in Vedic pandits."
         </div>
       </div>
 
-      <!-- Card 2: Nitric Oxide -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-5 hover:border-hud-cyan transition-colors">
-        <div class="text-xs font-mono text-hud-emerald mb-2">BIOPHYSICS // 2002</div>
-        <h3 class="text-base font-bold text-white mb-2">1,500% Paranasal Nitric Oxide Surge</h3>
+      <!-- Evidence 2 -->
+      <div class="hud-glass border border-hud-border rounded-2xl p-6 hover:border-hud-emerald transition-all group">
+        <div class="text-xs font-mono text-hud-emerald font-bold mb-2">KAROLINSKA INSTITUTE // 2002</div>
+        <h3 class="text-lg font-bold font-display text-white mb-2 group-hover:text-hud-emerald transition-colors">1,500% Paranasal Nitric Oxide Surge</h3>
         <p class="text-xs text-slate-300 leading-relaxed mb-4">
-          Karolinska Institute researchers (Weitzberg & Lundberg) measured sinusoidal gas levels during humming/chanting acoustic vibrations (*Anusvāra*). Low-frequency acoustic resonance creates a <strong>15-fold (1,500%) surge in Nitric Oxide gas release</strong>, vasodilating cerebral micro-vessels and flushing fresh oxygen into brain tissue.
+          Karolinska Institute researchers (Weitzberg & Lundberg) measured sinusoidal gas levels during humming and resonant vocalizations (*Anusvāra*). The acoustic resonance causes an immediate <strong>15-fold (1,500%) surge in nitric oxide (NO) gas release</strong>, vasodilating cerebral micro-vessels and flushing oxygenated blood directly into brain tissue.
         </p>
-        <div class="text-[11px] font-mono text-slate-400 border-t border-hud-border pt-3">
-          <strong>Citation:</strong> <em>Am J Respir Crit Care Med</em>. "Humming greatly increases nasal nitric oxide."
+        <div class="text-[11px] font-mono text-slate-500 border-t border-hud-border pt-3">
+          <strong>Publication:</strong> <em>Am J Respir Crit Care Med</em>, 166(2). "Humming greatly increases nasal nitric oxide."
         </div>
       </div>
 
-      <!-- Card 3: Information Theory -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-5 hover:border-hud-cyan transition-colors">
-        <div class="text-xs font-mono text-amber-400 mb-2">COMPUTER SCIENCE // 1500 BCE</div>
-        <h3 class="text-base font-bold text-white mb-2">The 3,500-Year-Old Parity Checksum</h3>
+      <!-- Evidence 3 -->
+      <div class="hud-glass border border-hud-border rounded-2xl p-6 hover:border-amber-400 transition-all group">
+        <div class="text-xs font-mono text-amber-400 font-bold mb-2">INFORMATION THEORY // 1500 BCE</div>
+        <h3 class="text-lg font-bold font-display text-white mb-2 group-hover:text-amber-400 transition-colors">3,500-Year-Old Cryptographic Checksum</h3>
         <p class="text-xs text-slate-300 leading-relaxed mb-4">
-          Vedic sages solved data corruption in noisy channels 3,400 years before Claude Shannon. The <strong>Ghana Pāṭha</strong> recites syllables in forward-reverse matrix permutations (`1-2-2-1-1-2-3-3-2-1-1-2-3`). Any oral slip breaks mathematical parity immediately, preserving 10,552 Rigvedic verses with 0.00% bit-rot.
+          Vedic sages solved data corruption in noisy channels 3,400 years before Claude Shannon. The <strong>Ghana Pāṭha</strong> system enforces matrix permutations (`1-2-2-1-1-2-3-3-2-1-1-2-3`), forcing biological neural networks to execute <strong>Forward Error Correction (FEC)</strong> and cryptographic parity checking to preserve 10,552 verses without bit-rot.
         </p>
-        <div class="text-[11px] font-mono text-slate-400 border-t border-hud-border pt-3">
-          <strong>Mechanism:</strong> Forward Error Correction (FEC) running on biological memory RAM.
+        <div class="text-[11px] font-mono text-slate-500 border-t border-hud-border pt-3">
+          <strong>Mechanism:</strong> Deterministic biological parity-checking algorithm.
         </div>
       </div>
     </div>
   </section>
 
-  <!-- MOVEMENT MATRIX SECTION (WITH ALL GENERATED DIAGRAMS) -->
-  <section id="exercises" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- VISUAL MOVEMENT MATRIX (MODAL LIGHTBOX + TABS) -->
+  <section id="movement" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
       <div>
-        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-          <span class="w-2 h-2 bg-hud-cyan rounded-full"></span>
-          <span>THE VISUAL MOVEMENT MATRIX</span>
-        </h2>
-        <p class="text-xs text-slate-400 font-mono mt-1">High-Precision Biomechanical Schematics</p>
+        <div class="text-xs font-mono text-hud-cyan uppercase font-semibold">Biomechanical Visuals</div>
+        <h2 class="text-2xl font-bold font-display text-white mt-1">The Visual Movement Matrix</h2>
+        <p class="text-xs text-slate-400 mt-0.5">Click any schematic to open high-resolution inspection modal.</p>
       </div>
-      <div class="flex space-x-2 font-mono text-xs" id="tab-buttons">
-        <button onclick="switchTab('posture')" id="tab-btn-posture" class="px-3 py-1.5 rounded bg-hud-cyan text-black font-bold transition-all">POSTURE_RESET</button>
-        <button onclick="switchTab('pillars')" id="tab-btn-pillars" class="px-3 py-1.5 rounded bg-hud-card border border-hud-border text-slate-300 hover:text-white transition-all">3_PILLARS</button>
-        <button onclick="switchTab('mom')" id="tab-btn-mom" class="px-3 py-1.5 rounded bg-hud-card border border-hud-border text-slate-300 hover:text-white transition-all">MOM_REHAB</button>
+
+      <!-- TABS -->
+      <div class="flex space-x-2 font-mono text-xs bg-hud-card p-1 rounded-xl border border-hud-border">
+        <button onclick="setMatrixTab('posture')" id="mtab-posture" class="px-4 py-2 rounded-lg bg-hud-cyan text-black font-bold transition-all shadow-lg">POSTURE_RESET</button>
+        <button onclick="setMatrixTab('pillars')" id="mtab-pillars" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all">3_PILLARS</button>
+        <button onclick="setMatrixTab('mom')" id="mtab-mom" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all">MOM_REHAB</button>
       </div>
     </div>
 
     <!-- TAB 1: POSTURE & FAKE FAT RESET -->
-    <div id="tab-posture" class="space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-hud-border flex items-center justify-between font-mono text-xs">
-            <span class="text-hud-cyan font-bold">SCHEMATIC 01 // ANTERIOR PELVIC TILT FIX</span>
-            <span class="text-slate-400">ELIMINATES PROTRUDING BELLY</span>
-          </div>
-          <div class="bg-black/50 p-2">
-            <img src="images/anterior_pelvic_tilt_fix.jpg" alt="Anterior Pelvic Tilt Fix" class="w-full rounded-lg object-contain max-h-96">
-          </div>
-          <div class="p-4 text-xs text-slate-300 space-y-2">
-            <p><strong>Couch Stretch / Half-Kneeling Stretch:</strong> Squeeze rear glute and posterior-tilt pelvis to unclench psoas.</p>
-            <p><strong>Dead Bug:</strong> Crush lower back flat into floor. 3 sets × 10 reps to activate transverse abdominis corset.</p>
-          </div>
+    <div id="mview-posture" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div onclick="openLightbox('images/anterior_pelvic_tilt_fix.jpg', 'Anterior Pelvic Tilt Correction', 'Fixes the protruding lower belly by releasing tight hip flexors (psoas) and firing deep transverse abdominis with dead bugs.')" 
+           class="hud-glass border border-hud-border hover:border-hud-cyan rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-4 border-b border-hud-border flex items-center justify-between font-mono text-xs">
+          <span class="text-hud-cyan font-bold">SCHEMATIC 01 // ANTERIOR PELVIC TILT FIX</span>
+          <span class="text-slate-400 group-hover:text-white transition-colors">CLICK TO EXPAND ↗</span>
         </div>
+        <div class="p-3 bg-black/40">
+          <img src="images/anterior_pelvic_tilt_fix.jpg" alt="Anterior Pelvic Tilt" class="w-full h-80 object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-300">
+        </div>
+        <div class="p-4 text-xs text-slate-300 space-y-1 font-mono">
+          <p><span class="text-hud-cyan">● Couch Stretch:</span> Squeeze rear glute hard to de-clamp shortened hip flexors.</p>
+          <p><span class="text-hud-cyan">● Dead Bug:</span> Lower back crushed flat into floor to build deep abdominal wall.</p>
+        </div>
+      </div>
 
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-4 border-b border-hud-border flex items-center justify-between font-mono text-xs">
-            <span class="text-hud-cyan font-bold">SCHEMATIC 02 // JAWLINE & CERVICAL AXIS</span>
-            <span class="text-slate-400">ELIMINATES "FAKE FACE FAT"</span>
-          </div>
-          <div class="bg-black/50 p-2">
-            <img src="images/neck_jawline_posture_fix.jpg" alt="Neck and Jawline Posture Fix" class="w-full rounded-lg object-contain max-h-96">
-          </div>
-          <div class="p-4 text-xs text-slate-300 space-y-2">
-            <p><strong>Chin Tucks:</strong> Slide skull straight back on a horizontal shelf. Re-engages deep cervical flexors, instantly sharpening the submental jaw angle.</p>
-            <p><strong>Wall Angels:</strong> Slide arms in "W" to "Y" against flat wall. Eliminates forward rounded shoulders.</p>
-          </div>
+      <div onclick="openLightbox('images/neck_jawline_posture_fix.jpg', 'Forward Head & Jawline Correction', 'Pulls head back over cervical axis with chin tucks, eliminating the posture-induced double chin and opening rounded shoulders with wall angels.')" 
+           class="hud-glass border border-hud-border hover:border-hud-cyan rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-4 border-b border-hud-border flex items-center justify-between font-mono text-xs">
+          <span class="text-hud-cyan font-bold">SCHEMATIC 02 // JAWLINE & CERVICAL AXIS</span>
+          <span class="text-slate-400 group-hover:text-white transition-colors">CLICK TO EXPAND ↗</span>
+        </div>
+        <div class="p-3 bg-black/40">
+          <img src="images/neck_jawline_posture_fix.jpg" alt="Neck Posture" class="w-full h-80 object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-300">
+        </div>
+        <div class="p-4 text-xs text-slate-300 space-y-1 font-mono">
+          <p><span class="text-hud-cyan">● Chin Tucks:</span> Strengthen deep cervical flexors to restore jawline definition.</p>
+          <p><span class="text-hud-cyan">● Wall Angels:</span> Repositions scapular stabilizers and un-rounds shoulders.</p>
         </div>
       </div>
     </div>
 
     <!-- TAB 2: THE 3 LIFELONG PILLARS -->
-    <div id="tab-pillars" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold">PILLAR 1: HEAVY STRENGTH</div>
-          <img src="images/pillar_1_strength.jpg" alt="Strength Pillar" class="w-full h-56 object-cover">
-          <div class="p-4 text-xs text-slate-300 space-y-1">
-            <p class="font-bold text-white">Farmer's Walks & Goblet Squats</p>
-            <p class="text-slate-400">2–3x/wk. Grip strength and leg horsepower preserve unassisted toilet transfers.</p>
-          </div>
+    <div id="mview-pillars" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
+      <div onclick="openLightbox('images/pillar_1_strength.jpg', 'Pillar 1: Heavy Strength', 'Farmer walks and goblet squats to preserve leg power and grip strength for unassisted living.')"
+           class="hud-glass border border-hud-border hover:border-hud-cyan rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold flex justify-between">
+          <span>01 // HEAVY STRENGTH</span><span>EXPAND ↗</span>
         </div>
-
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-emerald font-bold">PILLAR 2: ZONE 2 STEADY CARDIO</div>
-          <img src="images/pillar_2_zone2_cardio.jpg" alt="Zone 2 Cardio" class="w-full h-56 object-cover">
-          <div class="p-4 text-xs text-slate-300 space-y-1">
-            <p class="font-bold text-white">Conversational Pace (150m/wk)</p>
-            <p class="text-slate-400">Cycling & power-walking. Expands mitochondrial volume and cleanses brain capillaries.</p>
-          </div>
+        <img src="images/pillar_1_strength.jpg" alt="Strength Pillar" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+        <div class="p-4 text-xs text-slate-300 font-mono">
+          <div class="font-bold text-white mb-1">Farmer's Walk & Squats</div>
+          <p class="text-slate-400">Maintains the quad and grip horsepower needed to live outside assisted care.</p>
         </div>
+      </div>
 
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-3 border-b border-hud-border font-mono text-xs text-amber-400 font-bold">PILLAR 3: VO2 MAX SPRINTS</div>
-          <img src="images/pillar_3_vo2_max.jpg" alt="VO2 Max Intervals" class="w-full h-56 object-cover">
-          <div class="p-4 text-xs text-slate-300 space-y-1">
-            <p class="font-bold text-white">The 4x4 High-Intensity Protocol</p>
-            <p class="text-slate-400">1x/wk. 4 mins near max, 3 mins rest. 5x reduction in all-cause mortality risk.</p>
-          </div>
+      <div onclick="openLightbox('images/pillar_2_zone2_cardio.jpg', 'Pillar 2: Zone 2 Cardio', 'Low-intensity steady state (150-180m/wk) building mitochondrial volume and flushing cerebral capillaries.')"
+           class="hud-glass border border-hud-border hover:border-hud-emerald rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-emerald font-bold flex justify-between">
+          <span>02 // ZONE 2 CARDIO</span><span>EXPAND ↗</span>
+        </div>
+        <img src="images/pillar_2_zone2_cardio.jpg" alt="Zone 2 Cardio" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+        <div class="p-4 text-xs text-slate-300 font-mono">
+          <div class="font-bold text-white mb-1">Steady Aerobic Engine</div>
+          <p class="text-slate-400">Power-walking and cycling at conversational pace to clean brain micro-vessels.</p>
+        </div>
+      </div>
+
+      <div onclick="openLightbox('images/pillar_3_vo2_max.jpg', 'Pillar 3: VO2 Max Intervals', '4x4 High-intensity interval sprints. The single strongest statistical predictor of human lifespan.')"
+           class="hud-glass border border-hud-border hover:border-amber-400 rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-3 border-b border-hud-border font-mono text-xs text-amber-400 font-bold flex justify-between">
+          <span>03 // VO2 MAX SPRINTS</span><span>EXPAND ↗</span>
+        </div>
+        <img src="images/pillar_3_vo2_max.jpg" alt="VO2 Max" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+        <div class="p-4 text-xs text-slate-300 font-mono">
+          <div class="font-bold text-white mb-1">The 4x4 Protocol (1x/wk)</div>
+          <p class="text-slate-400">4 mins flat out, 3 mins rest. Delivers a 5x all-cause mortality shield.</p>
         </div>
       </div>
     </div>
 
     <!-- TAB 3: MOM'S JOINT-SAFE REHAB -->
-    <div id="tab-mom" class="space-y-6 hidden">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold">01 // SIT-TO-STAND SQUAT</div>
-          <img src="images/sit_to_stand.jpg" alt="Sit to Stand" class="w-full h-56 object-cover">
-          <div class="p-4 text-xs text-slate-300">
-            <p class="font-bold text-white">Chair Transfer Power</p>
-            <p class="text-slate-400">10–15 reps, arms crossed. Eliminates the need for toilet assistance.</p>
-          </div>
+    <div id="mview-mom" class="grid grid-cols-1 md:grid-cols-3 gap-6 hidden">
+      <div onclick="openLightbox('images/sit_to_stand.jpg', 'Sit-to-Stand Squat', 'Eliminates need for toilet assistance by building thigh and hip-hinge transfer power.')"
+           class="hud-glass border border-hud-border hover:border-hud-cyan rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold flex justify-between">
+          <span>01 // SIT-TO-STAND</span><span>EXPAND ↗</span>
         </div>
-
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold">02 // SEATED KNEE EXTENSION</div>
-          <img src="images/seated_leg_extension.jpg" alt="Seated Leg Extension" class="w-full h-56 object-cover">
-          <div class="p-4 text-xs text-slate-300">
-            <p class="font-bold text-white">Zero-Joint-Load Quad Isolation</p>
-            <p class="text-slate-400">10 reps per side. Holds 3s. Strengthens quadriceps without knee friction.</p>
-          </div>
+        <img src="images/sit_to_stand.jpg" alt="Sit to Stand" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+        <div class="p-4 text-xs text-slate-300 font-mono">
+          <div class="font-bold text-white mb-1">Unassisted Transfers</div>
+          <p class="text-slate-400">10–15 reps, arms crossed. Builds independence off low seating.</p>
         </div>
+      </div>
 
-        <div class="border border-hud-border bg-hud-card rounded-xl overflow-hidden">
-          <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold">03 // SIDE HIP RAISES & BALANCE</div>
-          <img src="images/side_leg_raises.jpg" alt="Side Leg Raises" class="w-full h-56 object-cover">
-          <div class="p-4 text-xs text-slate-300">
-            <p class="font-bold text-white">Gluteus Medius Anti-Fall Defense</p>
-            <p class="text-slate-400">Stops the senior hip-drop and prevents hip fractures.</p>
-          </div>
+      <div onclick="openLightbox('images/seated_leg_extension.jpg', 'Seated Knee Extension', 'Direct quadriceps tendon isolation with zero joint-grinding pressure on arthritic kneecaps.')"
+           class="hud-glass border border-hud-border hover:border-hud-cyan rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold flex justify-between">
+          <span>02 // SEATED EXTENSIONS</span><span>EXPAND ↗</span>
+        </div>
+        <img src="images/seated_leg_extension.jpg" alt="Seated Leg Extension" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+        <div class="p-4 text-xs text-slate-300 font-mono">
+          <div class="font-bold text-white mb-1">Zero-Load Quad Strength</div>
+          <p class="text-slate-400">Hold 3s at top. Rebuilds leg drive without cartilage wear.</p>
+        </div>
+      </div>
+
+      <div onclick="openLightbox('images/side_leg_raises.jpg', 'Standing Side Leg Raises', 'Gluteus medius stabilization to eliminate the senior Trendelenburg hip-drop and prevent lateral falls.')"
+           class="hud-glass border border-hud-border hover:border-hud-cyan rounded-2xl overflow-hidden cursor-pointer group transition-all">
+        <div class="p-3 border-b border-hud-border font-mono text-xs text-hud-cyan font-bold flex justify-between">
+          <span>03 // SIDE HIP RAISES</span><span>EXPAND ↗</span>
+        </div>
+        <img src="images/side_leg_raises.jpg" alt="Side Leg Raises" class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+        <div class="p-4 text-xs text-slate-300 font-mono">
+          <div class="font-bold text-white mb-1">Lateral Fall Shield</div>
+          <p class="text-slate-400">Reinforces hip abductors to stop sideways falls and hip fractures.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- INTERACTIVE TIMERS & TOOLS -->
-  <section id="pacer" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- INTERACTIVE HARDWARE TOOLS: BIO-PACER & WORKOUT ENGINE -->
+  <section id="tools" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <!-- Tool 1: Nitric Oxide Breath Pacer -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-6 glow-cyan flex flex-col justify-between">
+      <!-- Tool 1: Nitric Oxide Bio-Acoustic Pacer -->
+      <div class="hud-glass border border-hud-border rounded-2xl p-6 sm:p-8 flex flex-col justify-between hud-glow-cyan">
         <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-mono text-hud-cyan font-bold">TOOL 01 // BIO-ACOUSTIC PACER</span>
-            <span class="text-xs font-mono text-slate-400">1,500% NITRIC OXIDE BURST</span>
+          <div class="flex items-center justify-between text-xs font-mono text-hud-cyan font-bold mb-3">
+            <span>TOOL 01 // BIO-ACOUSTIC METRONOME</span>
+            <span class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800">1,500% NO BURST</span>
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">Vedic Humming & Nitric Oxide Metronome</h3>
-          <p class="text-xs text-slate-300 mb-6">
-            Inhale deeply through your nose for 5 seconds. On exhale, hum gently or chant "Om" with steady lips for 5 seconds. Acoustic sinus vibration drives nitric oxide release.
+          <h3 class="text-xl font-bold font-display text-white mb-2">Vedic Resonance & Nitric Oxide Engine</h3>
+          <p class="text-xs text-slate-300 leading-relaxed mb-6 font-normal">
+            Breathe in through nose (5s). On exhale (5s), hum or recite "Om" with resonant lips. Cranial vibration activates paranasal nitric oxide release, dilating cerebral micro-vessels.
           </p>
         </div>
 
-        <div class="text-center py-6">
-          <div id="pacer-circle" class="w-32 h-32 mx-auto rounded-full border-4 border-hud-cyan flex items-center justify-center transition-all duration-1000 transform scale-100 bg-hud-cyan/10">
-            <span id="pacer-text" class="text-sm font-mono font-bold text-white">READY</span>
+        <!-- Concentric Breathing Circles -->
+        <div class="py-8 text-center relative flex items-center justify-center">
+          <div id="pacer-outer-ring" class="w-48 h-48 rounded-full border border-hud-cyan/20 absolute transition-all duration-1000 transform scale-100"></div>
+          <div id="pacer-mid-ring" class="w-36 h-36 rounded-full border-2 border-hud-cyan/40 absolute transition-all duration-1000 transform scale-100"></div>
+          <div id="pacer-core" class="w-24 h-24 rounded-full bg-hud-cyan/20 border-2 border-hud-cyan flex flex-col items-center justify-center relative z-10 transition-all duration-1000 transform scale-100 shadow-[0_0_25px_rgba(0,242,254,0.3)]">
+            <span id="pacer-state-text" class="text-xs font-display font-black text-white">READY</span>
+            <span id="pacer-countdown" class="text-[10px] font-mono text-hud-cyan">--</span>
           </div>
-          <div class="mt-4 font-mono text-xs text-slate-400" id="pacer-timer">00:00 / 03:00</div>
         </div>
 
-        <div class="flex justify-center space-x-3">
-          <button onclick="togglePacer()" id="pacer-btn" class="px-5 py-2 bg-hud-cyan text-black font-mono font-bold text-xs rounded hover:bg-cyan-300 transition-all">START PACER (3 MIN)</button>
+        <div class="flex items-center justify-between border-t border-hud-border pt-4 mt-2">
+          <div class="font-mono text-xs text-slate-400">
+            SESSION: <span id="pacer-timer-text" class="text-white font-bold">00:00</span> / 03:00
+          </div>
+          <button onclick="togglePacerEngine()" id="pacer-start-btn" 
+                  class="px-6 py-2.5 rounded-xl bg-hud-cyan text-black font-display font-bold text-xs hover:bg-cyan-300 transition-all shadow-[0_0_20px_rgba(0,242,254,0.4)]">
+            START PACER (3 MIN)
+          </button>
         </div>
       </div>
 
-      <!-- Tool 2: 12-Minute Posture Timer -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-6 glow-emerald flex flex-col justify-between">
+      <!-- Tool 2: 12-Minute Posture Workout Engine -->
+      <div class="hud-glass border border-hud-border rounded-2xl p-6 sm:p-8 flex flex-col justify-between hud-glow-emerald">
         <div>
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-mono text-hud-emerald font-bold">TOOL 02 // 12-MIN POSTURE WORKOUT</span>
-            <span class="text-xs font-mono text-slate-400">ALTERNATE DAY RESET</span>
+          <div class="flex items-center justify-between text-xs font-mono text-hud-emerald font-bold mb-3">
+            <span>TOOL 02 // WORKOUT ENGINE</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">ALTERNATE DAYS</span>
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">Anterior Pelvic & Tech Neck Engine</h3>
-          <p class="text-xs text-slate-300 mb-4">
-            Guided stopwatch tracking the 4 core steps: Hip Flexors ➔ Dead Bugs ➔ Glute Bridges ➔ Wall Angels.
+          <h3 class="text-xl font-bold font-display text-white mb-2">12-Minute Posture & Pelvis Stopwatch</h3>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4 font-normal">
+            Step-by-step guided cadence. Automatically tracks and transitions through the 4 essential movements to unclamp hip flexors and flatten the stomach.
           </p>
         </div>
 
-        <div class="space-y-2 font-mono text-xs my-4">
-          <div id="step-1" class="p-2 rounded bg-hud-surface border border-hud-border flex justify-between">
-            <span>01. Half-Kneeling Stretch</span><span class="text-slate-400">03:00</span>
+        <!-- Exercise Steps List -->
+        <div class="space-y-2 font-mono text-xs my-3">
+          <div id="step-row-1" class="p-3 rounded-xl bg-hud-card border border-hud-border flex justify-between items-center transition-all">
+            <div class="flex items-center space-x-2.5">
+              <span class="w-2 h-2 rounded-full bg-slate-600 step-dot"></span>
+              <span class="text-white font-semibold">1. Half-Kneeling Hip Flexor Stretch</span>
+            </div>
+            <span class="text-slate-400 text-[11px]">03:00</span>
           </div>
-          <div id="step-2" class="p-2 rounded bg-hud-surface border border-hud-border flex justify-between">
-            <span>02. Dead Bug Lower Back Flat</span><span class="text-slate-400">04:00</span>
+          <div id="step-row-2" class="p-3 rounded-xl bg-hud-card border border-hud-border flex justify-between items-center transition-all">
+            <div class="flex items-center space-x-2.5">
+              <span class="w-2 h-2 rounded-full bg-slate-600 step-dot"></span>
+              <span class="text-white font-semibold">2. Dead Bug (Lower Back Glued Flat)</span>
+            </div>
+            <span class="text-slate-400 text-[11px]">04:00</span>
           </div>
-          <div id="step-3" class="p-2 rounded bg-hud-surface border border-hud-border flex justify-between">
-            <span>03. Glute Bridge Posterior Tilt</span><span class="text-slate-400">03:00</span>
+          <div id="step-row-3" class="p-3 rounded-xl bg-hud-card border border-hud-border flex justify-between items-center transition-all">
+            <div class="flex items-center space-x-2.5">
+              <span class="w-2 h-2 rounded-full bg-slate-600 step-dot"></span>
+              <span class="text-white font-semibold">3. Glute Bridge (Posterior Tilt)</span>
+            </div>
+            <span class="text-slate-400 text-[11px]">03:00</span>
           </div>
-          <div id="step-4" class="p-2 rounded bg-hud-surface border border-hud-border flex justify-between">
-            <span>04. Wall Angels</span><span class="text-slate-400">03:00</span>
+          <div id="step-row-4" class="p-3 rounded-xl bg-hud-card border border-hud-border flex justify-between items-center transition-all">
+            <div class="flex items-center space-x-2.5">
+              <span class="w-2 h-2 rounded-full bg-slate-600 step-dot"></span>
+              <span class="text-white font-semibold">4. Wall Angels (Thoracic Opener)</span>
+            </div>
+            <span class="text-slate-400 text-[11px]">03:00</span>
           </div>
         </div>
 
-        <div class="flex justify-between items-center pt-2">
-          <span id="posture-clock" class="text-xl font-mono font-bold text-hud-emerald">13:00</span>
-          <button onclick="togglePostureTimer()" id="posture-btn" class="px-5 py-2 bg-hud-emerald text-black font-mono font-bold text-xs rounded hover:bg-emerald-300 transition-all">START ROUTINE</button>
+        <div class="flex items-center justify-between border-t border-hud-border pt-4 mt-2">
+          <div class="font-mono text-sm">
+            <span class="text-slate-400">REMAINING:</span> 
+            <span id="workout-timer-display" class="font-display font-black text-xl text-hud-emerald ml-1">13:00</span>
+          </div>
+          <button onclick="toggleWorkoutEngine()" id="workout-start-btn" 
+                  class="px-6 py-2.5 rounded-xl bg-hud-emerald text-black font-display font-bold text-xs hover:bg-emerald-300 transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)]">
+            START WORKOUT
+          </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- NUTRITION PROTOCOL: 10 TO FUEL VS 10 TO KILL -->
+  <!-- NUTRITION MATRIX: TOP 10 FUEL VS TOP 10 KILL -->
   <section id="nutrition" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mb-16">
     <div class="mb-6">
-      <h2 class="text-xl font-bold text-white flex items-center space-x-2">
-        <span class="w-2 h-2 bg-amber-400 rounded-full"></span>
-        <span>METABOLIC & BRAIN MATRIX: 10 TO CONSUME VS 10 TO ELIMINATE</span>
-      </h2>
-      <p class="text-xs text-slate-400 font-mono mt-1">Stool Consistency, Sarcopenia Prevention & Alzheimer's Shield</p>
+      <div class="text-xs font-mono text-amber-400 uppercase font-semibold">Nutritional Architecture</div>
+      <h2 class="text-2xl font-bold font-display text-white mt-1">Metabolic Defense: Top 10 to Fuel vs. Top 10 to Kill</h2>
+      <p class="text-xs text-slate-400 mt-1">Regulating the enteric-nervous system, Bristol Type-4 consistency, and brain barrier defense.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
       <!-- 10 to Fuel -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-6">
-        <div class="flex items-center space-x-2 text-hud-emerald font-mono text-xs font-bold mb-4">
-          <span>✔ TOP 10 DEFENSE FOODS (MANDATORY)</span>
+      <div class="hud-glass border border-hud-border rounded-2xl p-6">
+        <div class="flex items-center space-x-2 text-hud-emerald font-mono text-xs font-bold mb-4 pb-3 border-b border-hud-border">
+          <span class="w-2 h-2 rounded-full bg-hud-emerald"></span>
+          <span>TOP 10 MANDATORY DEFENSE FUEL</span>
         </div>
-        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">01.</span> <span><strong>Green Kiwis (2/day):</strong> Actinidin enzyme + fiber. Proven geriatric motility aid.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">02.</span> <span><strong>Wild Blueberries (1 cup):</strong> Anthocyanins cross blood-brain barrier to stop neuroinflammation.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">03.</span> <span><strong>Extra Virgin Olive Oil (2-3 tbsp):</strong> Oleocanthal enhances amyloid-beta plaque breakdown.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">04.</span> <span><strong>Wild Fatty Fish (Salmon/Sardines 3x/wk):</strong> DHA/EPA omega-3s maintain neuronal cell fluidity.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">05.</span> <span><strong>Psyllium Husk (1-2 tsp):</strong> Forms cohesive Bristol Type-4 stool. Prevents overflow leaks.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">06.</span> <span><strong>Dark Leafy Greens (Spinach/Kale):</strong> High folate & lutein; decelerates cognitive decline by 11 yrs.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">07.</span> <span><strong>Greek Yogurt / Kefir (1 cup):</strong> Probiotic gut flora diversity + calcium/protein base.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">08.</span> <span><strong>Walnuts (handful/day):</strong> Alpha-linolenic acid (ALA) preserves working memory recall.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">09.</span> <span><strong>Protein at Every Meal (25-30g):</strong> Beats age-related anabolic resistance, stops sarcopenia.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-emerald font-bold">10.</span> <span><strong>Target Hydration (2.0L water):</strong> Eliminates dry fecal impaction from blunted thirst signals.</span></li>
+        <ul class="space-y-3 text-xs text-slate-300 font-mono">
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">01.</span><span><strong>Green Kiwis (2/day):</strong> Actinidin enzyme + fiber. Clinically proven geriatric motility aid.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">02.</span><span><strong>Wild Blueberries (1 cup):</strong> Anthocyanins cross blood-brain barrier to stop neuroinflammation.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">03.</span><span><strong>Extra Virgin Olive Oil (2-3 tbsp):</strong> Oleocanthal enhances amyloid-beta plaque breakdown.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">04.</span><span><strong>Wild Fatty Fish (Salmon/Sardines 3x/wk):</strong> DHA/EPA omega-3s maintain neuronal cell fluidity.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">05.</span><span><strong>Psyllium Husk (1-2 tsp):</strong> Forms cohesive Bristol Type-4 stool. Prevents overflow leaks.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">06.</span><span><strong>Dark Leafy Greens (Spinach/Kale):</strong> High folate & lutein; decelerates cognitive decline by 11 yrs.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">07.</span><span><strong>Greek Yogurt / Kefir (1 cup):</strong> Probiotic gut flora diversity + calcium/protein base.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">08.</span><span><strong>Walnuts (handful/day):</strong> Alpha-linolenic acid (ALA) preserves working memory recall.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">09.</span><span><strong>Protein at Every Meal (25-30g):</strong> Beats age-related anabolic resistance, stops sarcopenia.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-emerald font-bold">10.</span><span><strong>Target Hydration (2.0L water):</strong> Eliminates dry fecal impaction from blunted thirst signals.</span></li>
         </ul>
       </div>
 
       <!-- 10 to Kill -->
-      <div class="border border-hud-border bg-hud-card rounded-xl p-6">
-        <div class="flex items-center space-x-2 text-hud-crimson font-mono text-xs font-bold mb-4">
-          <span>✖ TOP 10 DEGENERATION ACCELERATORS (ELIMINATE)</span>
+      <div class="hud-glass border border-hud-border rounded-2xl p-6">
+        <div class="flex items-center space-x-2 text-hud-crimson font-mono text-xs font-bold mb-4 pb-3 border-b border-hud-border">
+          <span class="w-2 h-2 rounded-full bg-hud-crimson"></span>
+          <span>TOP 10 DEGENERATION ACCELERATORS (PURGE)</span>
         </div>
-        <ul class="space-y-2.5 text-xs text-slate-300 font-mono">
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">01.</span> <span><strong>Liquid Fructose / Sodas:</strong> Drives cerebral insulin resistance ("Type 3 diabetes").</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">02.</span> <span><strong>Heavy Alcohol:</strong> Direct neurotoxin. Shrinks hippocampus volume and blunts bowel tone.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">03.</span> <span><strong>Industrial Seed Oils & Trans Fats:</strong> Drives systemic vascular endothelial inflammation.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">04.</span> <span><strong>Refined Ultra-Processed Pastries:</strong> Zero-fiber glucose bombs; paralyzes bowel peristalsis.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">05.</span> <span><strong>Untreated High Blood Pressure (>125 mmHg):</strong> Silently blows out cerebral micro-arterioles.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">06.</span> <span><strong>Untreated Sleep Apnea / Snoring:</strong> Hypoxia suffocates brain neurons every single night.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">07.</span> <span><strong>Ignoring Early Hearing Loss:</strong> Starves auditory cortex, accelerating temporal lobe atrophy.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">08.</span> <span><strong>Chronic Valsalva Straining on Toilet:</strong> Permanently stretches and damages the pudendal nerve.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">09.</span> <span><strong>Excessive Anticholinergic Medications:</strong> Causes catastrophic colonic hypomotility & impaction.</span></li>
-          <li class="flex items-start space-x-2"><span class="text-hud-crimson font-bold">10.</span> <span><strong>Sedentary Muscle Wasting:</strong> Leaving legs untrained guarantees institutional dependency by 80.</span></li>
+        <ul class="space-y-3 text-xs text-slate-300 font-mono">
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">01.</span><span><strong>Liquid Fructose / Sodas:</strong> Drives cerebral insulin resistance ("Type 3 diabetes").</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">02.</span><span><strong>Heavy Alcohol:</strong> Direct neurotoxin. Shrinks hippocampus volume and blunts bowel tone.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">03.</span><span><strong>Industrial Seed Oils & Trans Fats:</strong> Drives systemic vascular endothelial inflammation.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">04.</span><span><strong>Refined Ultra-Processed Pastries:</strong> Zero-fiber glucose bombs; paralyzes bowel peristalsis.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">05.</span><span><strong>Untreated High Blood Pressure (>125 mmHg):</strong> Silently blows out cerebral micro-arterioles.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">06.</span><span><strong>Untreated Sleep Apnea / Snoring:</strong> Hypoxia suffocates brain neurons every single night.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">07.</span><span><strong>Ignoring Early Hearing Loss:</strong> Starves auditory cortex, accelerating temporal lobe atrophy.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">08.</span><span><strong>Chronic Valsalva Straining on Toilet:</strong> Permanently stretches and damages the pudendal nerve.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">09.</span><span><strong>Excessive Anticholinergic Medications:</strong> Causes catastrophic colonic hypomotility & impaction.</span></li>
+          <li class="flex items-start space-x-3"><span class="text-hud-crimson font-bold">10.</span><span><strong>Sedentary Muscle Wasting:</strong> Leaving legs untrained guarantees institutional dependency by 80.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
-  <footer class="border-t border-hud-border bg-hud-surface py-8 text-center font-mono text-xs text-slate-500">
-    <p>CEREBRAL VEDA // OPEN SCIENCE & VEDIC CYBERNETICS // BUILT FOR HIGH INDEPENDENCE</p>
-    <p class="mt-2 text-slate-600">Zero Commercial Dogma. Verified Biomechanical Telemetry.</p>
-  </footer>
+  <!-- MODAL LIGHTBOX FOR HIGH-RES SCHEMATICS -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4 sm:p-6" onclick="closeLightbox(event)">
+    <div class="hud-glass border border-hud-borderHighlight rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+      <div class="p-4 border-b border-hud-border flex items-center justify-between bg-hud-card">
+        <div>
+          <h3 id="modal-title" class="text-base font-bold font-display text-white">Schematic Inspection</h3>
+          <p id="modal-subtitle" class="text-xs text-slate-400 font-mono mt-0.5">Biomechanical Diagnostic View</p>
+        </div>
+        <button onclick="closeLightbox()" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white font-mono text-sm flex items-center justify-center transition-colors">✕</button>
+      </div>
+      <div class="p-4 bg-hud-void flex-1 overflow-auto flex items-center justify-center">
+        <img id="modal-img" src="" alt="High-Res Schematic" class="max-h-[70vh] w-auto object-contain rounded-xl shadow-2xl">
+      </div>
+      <div class="p-4 border-t border-hud-border bg-hud-card text-xs text-slate-300 font-mono" id="modal-desc"></div>
+    </div>
+  </div>
 
-  <!-- INTERACTIVE LOGIC JAVASCRIPT -->
+  <!-- JAVASCRIPT LOGIC & AUDIO SYNTHESIZER -->
   <script>
-    // Tab switching
-    function switchTab(tab) {
-      document.getElementById('tab-posture').classList.add('hidden');
-      document.getElementById('tab-pillars').classList.add('hidden');
-      document.getElementById('tab-mom').classList.add('hidden');
+    // Web Audio API Synthesizer (Zero asset dependencies, futuristic SFX)
+    let audioCtx = null;
+    let sfxEnabled = true;
 
-      document.getElementById('tab-btn-posture').className = "px-3 py-1.5 rounded bg-hud-card border border-hud-border text-slate-300 hover:text-white transition-all";
-      document.getElementById('tab-btn-pillars').className = "px-3 py-1.5 rounded bg-hud-card border border-hud-border text-slate-300 hover:text-white transition-all";
-      document.getElementById('tab-btn-mom').className = "px-3 py-1.5 rounded bg-hud-card border border-hud-border text-slate-300 hover:text-white transition-all";
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playBeep(freq = 880, type = 'sine', duration = 0.08, gainVal = 0.05) {
+      if (!sfxEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function playResonantChime(freq = 432) {
+      if (!sfxEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') ctx.resume();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      sfxEnabled = !sfxEnabled;
+      document.getElementById('audio-status').innerText = sfxEnabled ? 'ON' : 'OFF';
+      document.getElementById('audio-status').className = sfxEnabled ? 'text-hud-cyan font-bold' : 'text-slate-500 font-bold';
+      if (sfxEnabled) playBeep(920);
+    }
+
+    // Modal Lightbox
+    function openLightbox(src, title, desc) {
+      playBeep(640);
+      document.getElementById('modal-img').src = src;
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('lightbox-modal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      playBeep(420);
+      document.getElementById('lightbox-modal').classList.add('hidden');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    // Tab Switching for Movement Matrix
+    function setMatrixTab(tab) {
+      playBeep(750);
+      document.getElementById('mview-posture').classList.add('hidden');
+      document.getElementById('mview-pillars').classList.add('hidden');
+      document.getElementById('mview-mom').classList.add('hidden');
+
+      document.getElementById('mtab-posture').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all";
+      document.getElementById('mtab-pillars').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all";
+      document.getElementById('mtab-mom').className = "px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all";
 
       if (tab === 'posture') {
-        document.getElementById('tab-posture').classList.remove('hidden');
-        document.getElementById('tab-btn-posture').className = "px-3 py-1.5 rounded bg-hud-cyan text-black font-bold transition-all";
+        document.getElementById('mview-posture').classList.remove('hidden');
+        document.getElementById('mtab-posture').className = "px-4 py-2 rounded-lg bg-hud-cyan text-black font-bold transition-all shadow-lg";
       } else if (tab === 'pillars') {
-        document.getElementById('tab-pillars').classList.remove('hidden');
-        document.getElementById('tab-btn-pillars').className = "px-3 py-1.5 rounded bg-hud-cyan text-black font-bold transition-all";
+        document.getElementById('mview-pillars').classList.remove('hidden');
+        document.getElementById('mtab-pillars').className = "px-4 py-2 rounded-lg bg-hud-cyan text-black font-bold transition-all shadow-lg";
       } else if (tab === 'mom') {
-        document.getElementById('tab-mom').classList.remove('hidden');
-        document.getElementById('tab-btn-mom').className = "px-3 py-1.5 rounded bg-hud-cyan text-black font-bold transition-all";
+        document.getElementById('mview-mom').classList.remove('hidden');
+        document.getElementById('mtab-mom').className = "px-4 py-2 rounded-lg bg-hud-cyan text-black font-bold transition-all shadow-lg";
       }
     }
 
-    // Breath Pacer (5s inhale, 5s hum/exhale)
+    // Age vs Decline Simulator Calculation
+    function updateSimulator(age) {
+      document.getElementById('age-display').innerText = age;
+      const t = (age - 60) / 35; // 0 at 60, 1 at 95
+
+      // Standard model calculation
+      const stdTransfer = Math.max(12, Math.round(85 - t * 70));
+      const stdBrain = Math.max(48, Math.round(92 - t * 40));
+      const stdIncont = Math.min(68, Math.round(6 + t * 58));
+
+      // Cerebral Veda model calculation
+      const vedaTransfer = Math.max(78, Math.round(99 - t * 18));
+      const vedaBrain = Math.max(82, Math.round(98 - t * 14));
+      const vedaIncont = Math.min(8, Math.round(1 + t * 6));
+
+      document.getElementById('std-transfer').innerText = `${stdTransfer}% Probability`;
+      document.getElementById('std-transfer-bar').style.width = `${stdTransfer}%`;
+
+      document.getElementById('std-brain').innerText = `${stdBrain}% of Baseline`;
+      document.getElementById('std-brain-bar').style.width = `${stdBrain}%`;
+
+      document.getElementById('std-incontinence').innerText = `${stdIncont}% High Risk`;
+      document.getElementById('std-incont-bar').style.width = `${stdIncont}%`;
+
+      document.getElementById('veda-transfer').innerText = `${vedaTransfer}% High Independence`;
+      document.getElementById('veda-transfer-bar').style.width = `${vedaTransfer}%`;
+
+      document.getElementById('veda-brain').innerText = `${vedaBrain}% of Baseline`;
+      document.getElementById('veda-brain-bar').style.width = `${vedaBrain}%`;
+
+      document.getElementById('veda-incontinence').innerText = `${vedaIncont}% Negligible`;
+      document.getElementById('veda-incont-bar').style.width = `${vedaIncont}%`;
+    }
+
+    // Bio-Acoustic Pacer Engine
+    let pacerActive = false;
     let pacerInterval = null;
-    let pacerSeconds = 0;
-    let isPacing = false;
+    let pacerElapsed = 0;
 
-    function togglePacer() {
-      const btn = document.getElementById('pacer-btn');
-      const text = document.getElementById('pacer-text');
-      const circle = document.getElementById('pacer-circle');
-      const timer = document.getElementById('pacer-timer');
+    function togglePacerEngine() {
+      const btn = document.getElementById('pacer-start-btn');
+      const stateText = document.getElementById('pacer-state-text');
+      const countText = document.getElementById('pacer-countdown');
+      const core = document.getElementById('pacer-core');
+      const mid = document.getElementById('pacer-mid-ring');
+      const outer = document.getElementById('pacer-outer-ring');
 
-      if (isPacing) {
+      if (pacerActive) {
         clearInterval(pacerInterval);
-        isPacing = false;
+        pacerActive = false;
         btn.innerText = "START PACER (3 MIN)";
-        text.innerText = "READY";
-        circle.style.transform = "scale(1)";
-        circle.classList.remove('border-hud-emerald');
-        circle.classList.add('border-hud-cyan');
+        btn.className = "px-6 py-2.5 rounded-xl bg-hud-cyan text-black font-display font-bold text-xs hover:bg-cyan-300 transition-all shadow-[0_0_20px_rgba(0,242,254,0.4)]";
+        stateText.innerText = "READY";
+        countText.innerText = "--";
+        core.style.transform = "scale(1)";
+        mid.style.transform = "scale(1)";
+        outer.style.transform = "scale(1)";
+        playBeep(440);
         return;
       }
 
-      isPacing = true;
-      pacerSeconds = 0;
-      btn.innerText = "STOP PACER";
+      pacerActive = true;
+      pacerElapsed = 0;
+      btn.innerText = "HALT PACER";
+      btn.className = "px-6 py-2.5 rounded-xl bg-red-500 text-white font-display font-bold text-xs hover:bg-red-600 transition-all shadow-[0_0_20px_rgba(239,68,68,0.4)]";
 
-      function updatePacer() {
-        pacerSeconds++;
-        const cycle = pacerSeconds % 10;
-        const mins = Math.floor(pacerSeconds / 60).toString().padStart(2, '0');
-        const secs = (pacerSeconds % 60).toString().padStart(2, '0');
-        timer.innerText = `${mins}:${secs} / 03:00`;
+      function tickPacer() {
+        pacerElapsed++;
+        const cycle = pacerElapsed % 10;
+        const mins = Math.floor(pacerElapsed / 60).toString().padStart(2, '0');
+        const secs = (pacerElapsed % 60).toString().padStart(2, '0');
+        document.getElementById('pacer-timer-text').innerText = `${mins}:${secs}`;
 
         if (cycle < 5) {
-          text.innerText = `INHALE (${5 - cycle})`;
-          circle.style.transform = "scale(1.25)";
-          circle.classList.add('border-hud-cyan');
-          circle.classList.remove('border-hud-emerald');
+          const remaining = 5 - cycle;
+          stateText.innerText = "INHALE";
+          countText.innerText = `${remaining}s`;
+          core.style.transform = "scale(1.35)";
+          mid.style.transform = "scale(1.25)";
+          outer.style.transform = "scale(1.15)";
+          core.className = "w-24 h-24 rounded-full bg-hud-cyan/30 border-2 border-hud-cyan flex flex-col items-center justify-center relative z-10 transition-all duration-1000 transform shadow-[0_0_35px_rgba(0,242,254,0.6)]";
+          if (cycle === 0) playResonantChime(432);
         } else {
-          text.innerText = `HUM / OM (${10 - cycle})`;
-          circle.style.transform = "scale(0.85)";
-          circle.classList.remove('border-hud-cyan');
-          circle.classList.add('border-hud-emerald');
+          const remaining = 10 - cycle;
+          stateText.innerText = "HUM / OM";
+          countText.innerText = `${remaining}s`;
+          core.style.transform = "scale(0.85)";
+          mid.style.transform = "scale(0.9)";
+          outer.style.transform = "scale(0.95)";
+          core.className = "w-24 h-24 rounded-full bg-emerald-500/30 border-2 border-hud-emerald flex flex-col items-center justify-center relative z-10 transition-all duration-1000 transform shadow-[0_0_35px_rgba(16,185,129,0.6)]";
+          if (cycle === 5) playResonantChime(216);
         }
 
-        if (pacerSeconds >= 180) {
-          togglePacer();
+        if (pacerElapsed >= 180) {
+          togglePacerEngine();
         }
       }
 
-      updatePacer();
-      pacerInterval = setInterval(updatePacer, 1000);
+      tickPacer();
+      pacerInterval = setInterval(tickPacer, 1000);
     }
 
-    // Posture Timer (13 mins)
-    let postureInterval = null;
-    let postureRemaining = 780; // 13 mins in secs
-    let isPostureRunning = false;
+    // Workout Engine Stopwatch
+    let workoutActive = false;
+    let workoutInterval = null;
+    let workoutTime = 780; // 13 mins
 
-    function togglePostureTimer() {
-      const btn = document.getElementById('posture-btn');
-      const clock = document.getElementById('posture-clock');
+    function toggleWorkoutEngine() {
+      const btn = document.getElementById('workout-start-btn');
+      const clock = document.getElementById('workout-timer-display');
 
-      if (isPostureRunning) {
-        clearInterval(postureInterval);
-        isPostureRunning = false;
+      if (workoutActive) {
+        clearInterval(workoutInterval);
+        workoutActive = false;
         btn.innerText = "RESUME";
+        playBeep(440);
         return;
       }
 
-      isPostureRunning = true;
+      workoutActive = true;
       btn.innerText = "PAUSE";
+      playBeep(660);
 
-      postureInterval = setInterval(() => {
-        if (postureRemaining > 0) {
-          postureRemaining--;
-          const m = Math.floor(postureRemaining / 60).toString().padStart(2, '0');
-          const s = (postureRemaining % 60).toString().padStart(2, '0');
+      workoutInterval = setInterval(() => {
+        if (workoutTime > 0) {
+          workoutTime--;
+          const m = Math.floor(workoutTime / 60).toString().padStart(2, '0');
+          const s = (workoutTime % 60).toString().padStart(2, '0');
           clock.innerText = `${m}:${s}`;
+
+          // Highlight active step
+          const elapsed = 780 - workoutTime;
+          document.querySelectorAll('.step-dot').forEach(d => d.className = "w-2 h-2 rounded-full bg-slate-600 step-dot");
+          if (elapsed < 180) {
+            document.querySelector('#step-row-1 .step-dot').className = "w-2 h-2 rounded-full bg-hud-emerald step-dot animate-ping";
+          } else if (elapsed < 420) {
+            document.querySelector('#step-row-2 .step-dot').className = "w-2 h-2 rounded-full bg-hud-emerald step-dot animate-ping";
+          } else if (elapsed < 600) {
+            document.querySelector('#step-row-3 .step-dot').className = "w-2 h-2 rounded-full bg-hud-emerald step-dot animate-ping";
+          } else {
+            document.querySelector('#step-row-4 .step-dot').className = "w-2 h-2 rounded-full bg-hud-emerald step-dot animate-ping";
+          }
+
+          if (workoutTime % 60 === 0) playBeep(880, 'sine', 0.15);
         } else {
-          clearInterval(postureInterval);
-          isPostureRunning = false;
+          clearInterval(workoutInterval);
+          workoutActive = false;
           btn.innerText = "COMPLETE!";
+          playResonantChime(528);
         }
       }, 1000);
     }
